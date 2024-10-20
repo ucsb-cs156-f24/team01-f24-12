@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -53,8 +54,32 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     @WithMockUser(roles = { "USER" })
     @Test
     public void logged_in_users_can_get_all() throws Exception {
-            mockMvc.perform(get("/api/ucsbdiningcommonsmenuitem/all"))
-                            .andExpect(status().is(200)); // logged
+        // Arrange: Create some sample menu items to be returned by the mock repository
+        UCSBDiningCommonsMenuItem item1 = UCSBDiningCommonsMenuItem.builder()
+                .diningCommonsCode("DLG")
+                .name("DeLaGuerra")
+                .station("Grill")
+                .build();
+    
+        UCSBDiningCommonsMenuItem item2 = UCSBDiningCommonsMenuItem.builder()
+                .diningCommonsCode("Portola")
+                .name("Pasta")
+                .station("Italian")
+                .build();
+    
+        ArrayList<UCSBDiningCommonsMenuItem> expectedItems = new ArrayList<>(Arrays.asList(item1, item2));
+    
+        when(ucsbDiningCommonsMenuItemRepository.findAll()).thenReturn(expectedItems);
+    
+        // Act: Perform the GET request
+        MvcResult response = mockMvc.perform(get("/api/ucsbdiningcommonsmenuitem/all"))
+                .andExpect(status().isOk())
+                .andReturn();
+    
+        // Assert: Check that the returned data matches the expected items
+        String expectedJson = mapper.writeValueAsString(expectedItems);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
     }
 
     // Authorization tests for /api/ucsbdates/post
@@ -88,7 +113,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
             when(ucsbDiningCommonsMenuItemRepository.save(eq(ucsbMenuItem1))).thenReturn(ucsbMenuItem1);
 
-            // act // change green thing
+            // act 
             MvcResult response = mockMvc.perform(
                             post("/api/ucsbdiningcommonsmenuitem/post?diningCommonsCode=DLG&name=DeLaGuerra&station=Grill&localDateTime=2022-01-03T00:00:00")
                                             .with(csrf()))
