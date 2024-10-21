@@ -1,4 +1,4 @@
-package edu.ucsb.cs156.example.entities;
+package edu.ucsb.cs156.example.repositories;
 
 import edu.ucsb.cs156.example.entities.UCSBDiningCommonsMenuItem;
 
