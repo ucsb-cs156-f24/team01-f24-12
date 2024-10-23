@@ -193,7 +193,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
                             .diningCommonsCode("DLGGG")
                             .name("DeLaGuerrrrrrrra")
                             .station("Grilllll")
-                            .build();
+                            .build(); 
 
             String requestBody = mapper.writeValueAsString(ucsbDiningCommonsMenuItemEdited);
 

@@ -70,7 +70,7 @@ public class UCSBDiningCommonsMenuItemController extends ApiController {
         UCSBDiningCommonsMenuItem menuItem = new UCSBDiningCommonsMenuItem();
         menuItem.setDiningCommonsCode(diningCommonsCode);
         menuItem.setName(name);
-        menuItem.setStation(station);
+        menuItem.setStation(station); 
 
         UCSBDiningCommonsMenuItem savedMenuItem = ucsbDiningCommonsMenuItemRepository.save(menuItem);
 
