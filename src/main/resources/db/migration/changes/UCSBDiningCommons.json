@@ -11,7 +11,7 @@
               "not": [
                 {
                   "tableExists": {
-                    "tableName": "UCSBOrganizations"
+                    "tableName": "UCSBDININGCOMMONS"
                   }
                 }
               ]
