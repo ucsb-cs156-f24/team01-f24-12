@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 import edu.ucsb.cs156.example.entities.RecommendationRequest;
 
 import java.time.LocalDateTime;
-@Tag(name = "RecommendationRequests")
+@Tag(name = "recommendationRequests")
 @RequestMapping("/api/recommendationrequests")
 @RestController
 @Slf4j
@@ -54,16 +54,16 @@ public class RecommendationRequestsController extends ApiController {
             @Parameter(name="explanation") @RequestParam String explanation,
             
             @Parameter(name="dateRequested", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS; see https://en.wikipedia.org/wiki/ISO_8601)")
-            @RequestParam("localDateTime") 
+            @RequestParam("dateRequested") 
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) 
-            LocalDateTime localDateTime, 
+            LocalDateTime dateRequested, 
             
             @Parameter(name="dateNeeded", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS; see https://en.wikipedia.org/wiki/ISO_8601)")
-            @RequestParam("localDateTime") 
+            @RequestParam("dateNeeded") 
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) 
-            LocalDateTime localDateTime2,
+            LocalDateTime dateNeeded,
 
-            @Parameter(name="done") @RequestParam boolean doneBool
+            @Parameter(name="doneBool") @RequestParam boolean doneBool
             )
 
             throws JsonProcessingException {
@@ -71,14 +71,15 @@ public class RecommendationRequestsController extends ApiController {
         // For an explanation of @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         // See: https://www.baeldung.com/spring-date-parameters
 
-        log.info("localDateTime={}", localDateTime);
+        log.info("localDateTime1={}", dateRequested);
+        log.info("localDateTime2={}", dateNeeded);
 
         RecommendationRequest req = new RecommendationRequest();
         req.setRequesterEmail(requesterEmail);
         req.setProfessorEmail(professorEmail);
         req.setExplanation(explanation);
-        req.setDateRequested(localDateTime);
-        req.setDateNeeded(localDateTime2);
+        req.setDateRequested(dateRequested);
+        req.setDateNeeded(dateNeeded);
         req.setDone(doneBool);
         RecommendationRequest savedReq = recommendationRequestRepository.save(req);
 
