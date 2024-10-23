@@ -1,0 +1,87 @@
+{ "databaseChangeLog": [
+    {
+        "changeSet": {
+          "id": "HelpRequest-1",
+          "author": "mayarosenbaum",
+          "preConditions": [
+            {
+              "onFail": "MARK_RAN"
+            },
+            {
+              "not": [
+                {
+                  "tableExists": {
+                    "tableName": "HELPREQUEST"
+                  }
+                }
+              ]
+            }
+          ],
+          "changes": [
+            {
+              "createTable": {
+                "columns": [
+                  {
+                    "column": {
+                    "autoIncrement": true,
+                      "constraints": {
+                        "primaryKey": true,
+                        "primaryKeyName": "HELPREQUEST_PK"
+                      },
+                      "name": "ID",
+                      "type": "BIGINT"
+                    }
+                  },
+                  {
+                    "column": {
+                      "constraints": {
+                        "nullable": false
+                      },
+                      "name": "REQUESTEREMAIL",
+                      "type": "VARCHAR(255)"
+                    }
+                  },
+                  {
+                    "column": {
+                      "constraints": {
+                        "nullable": false
+                      },
+                      "name": "TEAMID",
+                      "type": "VARCHAR(255)"
+                    }
+                  },
+                  {
+                    "column": {
+                      "constraints": {
+                        "nullable": false
+                      },
+                      "name": "TABLEORBREAKOUTMEAL",
+                      "type": "VARCHAR(255)"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "REQUESTTIME",
+                      "type": "TIMESTAMP"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "EXPLANATION",
+                      "type": "VARCHAR(255)"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "SOLVED",
+                      "type": "BOOLEAN"
+                    }
+                  }]
+                ,
+                "tableName": "HELPREQUEST"
+              }
+            }]
+
+        }
+    }
+]}
