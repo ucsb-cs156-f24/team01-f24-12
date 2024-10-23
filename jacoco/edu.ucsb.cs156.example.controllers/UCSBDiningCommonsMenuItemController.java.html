@@ -70,11 +70,30 @@ import java.time.LocalDateTime;
 <span class="fc" id="L70">        UCSBDiningCommonsMenuItem menuItem = new UCSBDiningCommonsMenuItem();</span>
 <span class="fc" id="L71">        menuItem.setDiningCommonsCode(diningCommonsCode);</span>
 <span class="fc" id="L72">        menuItem.setName(name);</span>
-<span class="fc" id="L73">        menuItem.setStation(station);</span>
+<span class="fc" id="L73">        menuItem.setStation(station); </span>
 
 <span class="fc" id="L75">        UCSBDiningCommonsMenuItem savedMenuItem = ucsbDiningCommonsMenuItemRepository.save(menuItem);</span>
 
 <span class="fc" id="L77">        return savedMenuItem;</span>
+    }
+
+    @Operation(summary= &quot;Update a menu item&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+    @PutMapping(&quot;&quot;)
+    public UCSBDiningCommonsMenuItem updateUCSBDiningCommonsMenuItem(
+            @Parameter(name=&quot;id&quot;) @RequestParam Long id,
+            @RequestBody @Valid UCSBDiningCommonsMenuItem incoming) {
+
+<span class="fc" id="L87">        UCSBDiningCommonsMenuItem ucsbDiningCommonsMenuItem = ucsbDiningCommonsMenuItemRepository.findById(id)</span>
+<span class="fc" id="L88">                .orElseThrow(() -&gt; new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, id));</span>
+
+<span class="fc" id="L90">        ucsbDiningCommonsMenuItem.setDiningCommonsCode(incoming.getDiningCommonsCode());</span>
+<span class="fc" id="L91">        ucsbDiningCommonsMenuItem.setName(incoming.getName());</span>
+<span class="fc" id="L92">        ucsbDiningCommonsMenuItem.setStation(incoming.getStation());</span>
+
+<span class="fc" id="L94">        ucsbDiningCommonsMenuItemRepository.save(ucsbDiningCommonsMenuItem);</span>
+
+<span class="fc" id="L96">        return ucsbDiningCommonsMenuItem;</span>
     }
 
 }
