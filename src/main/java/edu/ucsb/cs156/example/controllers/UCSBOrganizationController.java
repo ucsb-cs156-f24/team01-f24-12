@@ -33,7 +33,7 @@ import jakarta.validation.Valid;
 public class UCSBOrganizationsController extends ApiController {
 
     @Autowired
-    UCSBOrganizationsRepository UCSBOrganizationsRepository;
+    UCSBOrganizationsRepository ucsbOrganizationsRepository;
 
     /**
      * THis method returns a list of all ucsborganizations.
@@ -43,7 +43,7 @@ public class UCSBOrganizationsController extends ApiController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
     public Iterable<UCSBOrganizations> allCommonss() {
-        Iterable<UCSBOrganizations> organization = UCSBOrganizationsRepository.findAll();
+        Iterable<UCSBOrganizations> organization = ucsbOrganizationsRepository.findAll();
         return commons;
     }
 
@@ -57,7 +57,7 @@ public class UCSBOrganizationsController extends ApiController {
     @GetMapping("")
     public UCSBOrganizations getById(
             @Parameter(name="orgcode") @RequestParam String orgcode) {
-        UCSBOrganizations organization = UCSBOrganizationsRepository.findById(orgcode)
+        UCSBOrganizations organization = ucsbOrganizationsRepository.findById(orgcode)
                 .orElseThrow(() -> new EntityNotFoundException(UCSBOrganizations.class, orgcode));
 
         return organization;
@@ -86,7 +86,7 @@ public class UCSBOrganizationsController extends ApiController {
         commons.setOrgTranslation(orgTranslation);
         commons.setInactive(inactive);
 
-        UCSBOrganizations saveOrganization = UCSBOrganizationsRepository.save(organization);
+        UCSBOrganizations saveOrganization = ucsbOrganizationsRepository.save(organization);
 
         return saveOrganization;
     }
