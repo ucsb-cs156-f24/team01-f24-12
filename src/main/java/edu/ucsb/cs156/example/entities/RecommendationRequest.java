@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "recommendationrequest")
+@Entity(name = "recommendationRequests")
 public class RecommendationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
