@@ -1,9 +1,7 @@
 package edu.ucsb.cs156.example.controllers;
 
-import edu.ucsb.cs156.example.entities.UCSBDate;
 import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.RecommendationRequestRepository;
-import edu.ucsb.cs156.example.repositories.UCSBDateRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -48,7 +46,7 @@ public class RecommendationRequestsController extends ApiController {
     @Operation(summary= "Create a new recommendation request")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
-    public RecommendationRequest postUCSBDate(
+    public RecommendationRequest postRecommendationRequest(
             @Parameter(name="requesterEmail") @RequestParam String requesterEmail,
             @Parameter(name="professorEmail") @RequestParam String professorEmail,
             @Parameter(name="explanation") @RequestParam String explanation,
@@ -84,6 +82,70 @@ public class RecommendationRequestsController extends ApiController {
         RecommendationRequest savedReq = recommendationRequestRepository.save(req);
 
         return savedReq;
+    }
+
+    /**
+     * Get a single request by id
+     * 
+     * @param id the id of the request
+     * @return a RecommendationRequest
+     */
+    @Operation(summary= "Get a single recommendation request")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public RecommendationRequest getById(
+            @Parameter(name="id") @RequestParam Long id) {
+        RecommendationRequest req = recommendationRequestRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(RecommendationRequest.class, id));
+
+        return req;
+    }
+
+    /**
+     * Delete a RecommendationRequest
+     * 
+     * @param id the id of the req
+     * @return a message indicating the req was deleted
+     */
+    @Operation(summary= "Delete a RecommendationRequest")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public Object deleteRecommendationRequest(
+            @Parameter(name="id") @RequestParam Long id) {
+        RecommendationRequest req = recommendationRequestRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(RecommendationRequest.class, id));
+
+        recommendationRequestRepository.delete(req);
+        return genericMessage("RecommendationRequest with id %s deleted".formatted(id));
+    }
+
+    /**
+     * Update a single recommendation request
+     * 
+     * @param id       id of the req to update
+     * @param incoming the new req
+     * @return the updated req object
+     */
+    @Operation(summary= "Update a single RecommendationRequest")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("")
+    public RecommendationRequest updateRecommendationRequest(
+            @Parameter(name="id") @RequestParam Long id,
+            @RequestBody @Valid RecommendationRequest incoming) {
+
+        RecommendationRequest req = recommendationRequestRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(RecommendationRequest.class, id));
+
+        req.setDateNeeded(incoming.getDateNeeded());
+        req.setDateRequested(incoming.getDateRequested());
+        req.setDone(incoming.getDone());
+        req.setProfessorEmail(incoming.getProfessorEmail());
+        req.setRequesterEmail(incoming.getRequesterEmail());
+        req.setExplanation(incoming.getExplanation());
+
+        recommendationRequestRepository.save(req);
+
+        return req;
     }
     
 }
