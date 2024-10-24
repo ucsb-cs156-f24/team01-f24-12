@@ -42,9 +42,9 @@ public class UCSBOrganizationsController extends ApiController {
     @Operation(summary= "List all ucsb organizations")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
-    public Iterable<UCSBOrganizations> allCommonss() {
+    public Iterable<UCSBOrganizations> allOrganizations() {
         Iterable<UCSBOrganizations> organization = ucsbOrganizationsRepository.findAll();
-        return commons;
+        return organization;
     }
 
     /**
@@ -73,18 +73,18 @@ public class UCSBOrganizationsController extends ApiController {
     @Operation(summary= "Create a new organization")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
-    public UCSBOrganizations postCommons(
-         @Parameter(name="orgcode") @RequestParam String orgcode,
+    public UCSBOrganizations postOrganizations(
+        @Parameter(name="orgcode") @RequestParam String orgcode,
         @Parameter(name="orgTranslationShort") @RequestParam String orgTranslationShort,
         @Parameter(name="orgTranslation") @RequestParam String orgTranslation,
-        @Parameter(name="inactive") @RequestParam boolean inactive,
+        @Parameter(name="inactive") @RequestParam boolean inactive
         )
         {
         UCSBOrganizations organization = new UCSBOrganizations();
-        commons.setOrgCode(orgcode);
-        commons.setOrgTranslationShort(orgTranslationShort);
-        commons.setOrgTranslation(orgTranslation);
-        commons.setInactive(inactive);
+        organization.setOrgcode(orgcode);
+        organization.setOrgTranslationShort(orgTranslationShort);
+        organization.setOrgTranslation(orgTranslation);
+        organization.setInactive(inactive);
 
         UCSBOrganizations saveOrganization = ucsbOrganizationsRepository.save(organization);
 
