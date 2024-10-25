@@ -80,7 +80,7 @@ public class RecommendationRequestsControllerTests extends ControllerTestCase {
                                 .explanation("pwease?!")
                                 .dateNeeded(ldt2)
                                 .dateRequested(ldt2)
-                                .done(false)
+                                .done(true)
                                 .build();
 
                 ArrayList<RecommendationRequest> expectedReqs = new ArrayList<>();
@@ -129,14 +129,14 @@ public class RecommendationRequestsControllerTests extends ControllerTestCase {
                                 .explanation("JUSTDOITALREADY")
                                 .dateNeeded(ldt1)
                                 .dateRequested(ldt1)
-                                .done(false)
+                                .done(true)
                                 .build();
 
                 when(recommendationRequestRepository.save(eq(req1))).thenReturn(req1);
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                post("/api/recommendationrequests/post?professorEmail=javin&requesterEmail=alsojavin&explanation=JUSTDOITALREADY&dateNeeded=2022-01-03T00:00:00&dateRequested=2022-01-03T00:00:00&doneBool=false")
+                                post("/api/recommendationrequests/post?professorEmail=javin&requesterEmail=alsojavin&explanation=JUSTDOITALREADY&dateNeeded=2022-01-03T00:00:00&dateRequested=2022-01-03T00:00:00&doneBool=true")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
@@ -167,7 +167,7 @@ public class RecommendationRequestsControllerTests extends ControllerTestCase {
                                 .explanation("JUSTDOITALREADY")
                                 .dateNeeded(ldt1)
                                 .dateRequested(ldt1)
-                                .done(false)
+                                .done(true)
                                 .build();
 
                 when(recommendationRequestRepository.findById(eq(7L))).thenReturn(Optional.of(req1));
@@ -281,7 +281,7 @@ public class RecommendationRequestsControllerTests extends ControllerTestCase {
                                 .explanation("pwease?!")
                                 .dateNeeded(ldt2)
                                 .dateRequested(ldt2)
-                                .done(false)
+                                .done(true)
                                 .build();
 
                 String requestBody = mapper.writeValueAsString(reqEdited);
