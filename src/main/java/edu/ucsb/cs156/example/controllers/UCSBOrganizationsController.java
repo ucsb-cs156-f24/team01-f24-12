@@ -43,8 +43,8 @@ public class UCSBOrganizationsController extends ApiController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
     public Iterable<UCSBOrganizations> allOrganizations() {
-        Iterable<UCSBOrganizations> organization = ucsbOrganizationsRepository.findAll();
-        return organization;
+        Iterable<UCSBOrganizations> organizations = ucsbOrganizationsRepository.findAll();
+        return organizations;
     }
 
     /**
@@ -57,10 +57,10 @@ public class UCSBOrganizationsController extends ApiController {
     @GetMapping("")
     public UCSBOrganizations getById(
             @Parameter(name="orgcode") @RequestParam String orgcode) {
-        UCSBOrganizations organization = ucsbOrganizationsRepository.findById(orgcode)
+        UCSBOrganizations organizations = ucsbOrganizationsRepository.findById(orgcode)
                 .orElseThrow(() -> new EntityNotFoundException(UCSBOrganizations.class, orgcode));
 
-        return organization;
+        return organizations;
     }
 
     /**
@@ -80,15 +80,15 @@ public class UCSBOrganizationsController extends ApiController {
         @Parameter(name="inactive") @RequestParam boolean inactive
         )
         {
-        UCSBOrganizations organization = new UCSBOrganizations();
-        organization.setOrgcode(orgcode);
-        organization.setOrgTranslationShort(orgTranslationShort);
-        organization.setOrgTranslation(orgTranslation);
-        organization.setInactive(inactive);
+        UCSBOrganizations organizations = new UCSBOrganizations();
+        organizations.setOrgcode(orgcode);
+        organizations.setOrgTranslationShort(orgTranslationShort);
+        organizations.setOrgTranslation(orgTranslation);
+        organizations.setInactive(inactive);
 
-        UCSBOrganizations saveOrganization = ucsbOrganizationsRepository.save(organization);
+        UCSBOrganizations saveOrganizations = ucsbOrganizationsRepository.save(organizations);
 
-        return saveOrganization;
+        return saveOrganizations;
     }
     /**
      * Delete a diningcommons. Accessible only to users with the role "ROLE_ADMIN".
