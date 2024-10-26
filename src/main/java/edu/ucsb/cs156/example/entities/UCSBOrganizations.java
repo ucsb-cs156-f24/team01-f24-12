@@ -17,9 +17,6 @@ import lombok.NoArgsConstructor;
 public class UCSBOrganizations {
     @Id
     private String orgcode;
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private String orgTranslationShort;
     private String orgTranslation;
     private boolean inactive;
