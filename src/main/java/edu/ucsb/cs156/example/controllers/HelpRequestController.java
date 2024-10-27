@@ -1,8 +1,8 @@
 package edu.ucsb.cs156.example.controllers;
 
-import edu.ucsb.cs156.example.entities.UCSBDate;
+import edu.ucsb.cs156.example.entities.HelpRequest;
 import edu.ucsb.cs156.example.errors.EntityNotFoundException;
-import edu.ucsb.cs156.example.repositories.UCSBDateRepository;
+import edu.ucsb.cs156.example.repositories.HelpRequestRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,25 +34,20 @@ import java.time.LocalDateTime;
 public class HelpRequestController extends ApiController {
 
     @Autowired
-    HelpRequest helpRequest;
+    HelpRequestRepository HelpRequestRepository;
 
     @Operation(summary= "Get a single date")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
     public Iterable<HelpRequest> allHelpRequests() {
-        Iterable<UCSBDate> helpRequests = HelpRequestRepository.findAll();
+        Iterable<HelpRequest> helpRequests = HelpRequestRepository.findAll();
         return helpRequests;
     }
 
-    /**
-     * This method returns a single restaurant.
-     * @param id id of the restaurant to get
-     * @return a single restaurant
-     */
     @Operation(summary = "Get a single help request")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
-    public Restaurant getById(
+    public HelpRequest getById(
             @Parameter(name = "id") @RequestParam Long id) {
         HelpRequest helpRequest = HelpRequestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
@@ -60,36 +55,31 @@ public class HelpRequestController extends ApiController {
         return helpRequest;
     }
 
-    /**
-     * Get a single date by id
-     * 
-     * @param id the id of the date
-     * @return a UCSBDate
-     */
 
     @Operation(summary= "Create a new date")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
-    public HelpRequest postHelpRequest {
-            @Parameter(name="requesterEmail") @RequestParam String requesterEmail;
-            @Parameter(name="teamId") @RequestParam String teamId;
-            @Parameter(name="tableOrBreakoutRoom") @RequestParam String tableOrBreakoutRoom;
-            @Parameter (name="requestTime") @RequestParam LocalDateTime requestTime;
-            @Parameter (name="explanation") @RequestParam String explanation;
+    public HelpRequest postHelpRequest (
+            @Parameter(name="requesterEmail") @RequestParam String requesterEmail,
+            @Parameter(name="teamId") @RequestParam String teamId,
+            @Parameter(name="tableOrBreakoutRoom") @RequestParam String tableOrBreakoutRoom,
+            @Parameter (name="requestTime") @RequestParam LocalDateTime requestTime,
+            @Parameter (name="explanation") @RequestParam String explanation) 
+            throws JsonProcessingException {
+
 
         // For an explanation of @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         // See: https://www.baeldung.com/spring-date-parameters
 
-        log.info("localDateTime={}", localDateTime);
 
         HelpRequest helpRequest = new HelpRequest();
         helpRequest.setRequesterEmail(requesterEmail);
         helpRequest.setTeamId(teamId);
         helpRequest.setTableOrBreakoutRoom(tableOrBreakoutRoom);
         helpRequest.setRequestTime(requestTime);
-        helpRequest.setExplanation(setExplanation);
+        helpRequest.setExplanation(explanation);
 
-        HelpRequest savedHelpRequest = helpRequest.save(helpRequest);
+        HelpRequest savedHelpRequest = HelpRequestRepository.save(helpRequest);
 
         return savedHelpRequest;
     }
@@ -127,10 +117,13 @@ public class HelpRequestController extends ApiController {
         HelpRequest helpRequest = HelpRequestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
 
-        helpRequest.setName(incoming.getName());
-        helpRequest.setDescription(incoming.getDescription());
+        helpRequest.setRequesterEmail(incoming.getRequesterEmail());
+        helpRequest.setTeamId(incoming.getTeamId());
+        helpRequest.setTableOrBreakoutRoom(incoming.getTableOrBreakoutRoom());
+        helpRequest.setRequestTime(incoming.getRequestTime());
+        helpRequest.setExplanation(incoming.getExplanation());
 
-        helpRequest.save(helpRequest);
+        HelpRequestRepository.save(helpRequest);
 
         return helpRequest;
     }
