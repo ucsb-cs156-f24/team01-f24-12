@@ -1,8 +1,10 @@
 package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.entities.HelpRequest;
+import edu.ucsb.cs156.example.entities.UCSBDate;
 import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.HelpRequestRepository;
+import edu.ucsb.cs156.example.repositories.UCSBDateRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.jknack.handlebars.HelperRegistry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,108 +30,130 @@ import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 
-@Tag(name = "HelpRequest")
-@RequestMapping("/api/helprequest")
+/**
+ * This is a REST controller for HelpRequest
+ */
+
+@Tag(name = "HelpRequests")
+@RequestMapping("/api/helprequests")
 @RestController
 @Slf4j
 public class HelpRequestController extends ApiController {
-
+    
     @Autowired
-    HelpRequestRepository HelpRequestRepository;
+    HelpRequestRepository helpRequestRepository; 
 
-    @Operation(summary= "Get a single date")
+    /**
+     * List all help requests
+     * @return an iterable of help requests
+     */
+    @Operation(summary= "List all help requests")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
     public Iterable<HelpRequest> allHelpRequests() {
-        Iterable<HelpRequest> helpRequests = HelpRequestRepository.findAll();
-        return helpRequests;
+        Iterable<HelpRequest> help_requests = helpRequestRepository.findAll();
+        return help_requests;
     }
 
-    @Operation(summary = "Get a single help request")
+    /**
+     * Get a single request by id
+     * @param id the id of the help request
+     * @return a HelpRequest
+     */
+    @Operation(summary= "Get a single help request")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
     public HelpRequest getById(
-            @Parameter(name = "id") @RequestParam Long id) {
-        HelpRequest helpRequest = HelpRequestRepository.findById(id)
+            @Parameter(name="id") @RequestParam Long id) {
+        HelpRequest helpRequest = helpRequestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
 
         return helpRequest;
     }
 
-
-    @Operation(summary= "Create a new date")
+     /**
+     * Create a help request
+     * @param requesterEmail the requester's email ID
+     * @param teamId          the team id of the requester
+     * @param tableOrBreakoutRoom where the help request is coming from
+     * @param requestTime the time help request was submitted
+     * @param explanation an explanation of the help request
+     * @param solved bool that indicates if the issue has been solved
+     * @return the saved help request
+     */
+    @Operation(summary= "Create a help request")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
-    public HelpRequest postHelpRequest (
+    public HelpRequest posthHelpRequest(
             @Parameter(name="requesterEmail") @RequestParam String requesterEmail,
             @Parameter(name="teamId") @RequestParam String teamId,
             @Parameter(name="tableOrBreakoutRoom") @RequestParam String tableOrBreakoutRoom,
-            @Parameter (name="requestTime") @RequestParam LocalDateTime requestTime,
-            @Parameter (name="explanation") @RequestParam String explanation,
-            @Parameter (name = "solved") @RequestParam Boolean solved)
+            @Parameter(name="requestTime", description="date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS; see https://en.wikipedia.org/wiki/ISO_8601)") @RequestParam("requestTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime requestTime,
+            @Parameter(name="explanation") @RequestParam String explanation,
+            @Parameter(name="solved") @RequestParam boolean solved)
             throws JsonProcessingException {
-
-
         // For an explanation of @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         // See: https://www.baeldung.com/spring-date-parameters
 
+        log.info("requestTime={}", requestTime);
 
-        HelpRequest helpRequest = new HelpRequest();
-        helpRequest.setRequesterEmail(requesterEmail);
+        HelpRequest helpRequest = new HelpRequest(); 
+        helpRequest.setRequesterEmail(requesterEmail); 
         helpRequest.setTeamId(teamId);
         helpRequest.setTableOrBreakoutRoom(tableOrBreakoutRoom);
         helpRequest.setRequestTime(requestTime);
         helpRequest.setExplanation(explanation);
         helpRequest.setSolved(solved);
 
-        HelpRequest savedHelpRequest = HelpRequestRepository.save(helpRequest);
+        helpRequestRepository.save(helpRequest);
 
-        return savedHelpRequest;
+        return helpRequest; 
     }
 
-    /**
-     * Deletes a restaurant. Accessible only to users with the role "ROLE_ADMIN".
-     * @param id id of the restaurant to delete
-     * @return a message indicating that the restaurant was deleted
+     /**
+     * Delete a HelpRequest
+     * @param id the id of the helprequest to delete
+     * @return a message indicating the helprequest was deleted
      */
-    @Operation(summary = "Delete a HelpRequest")
+    @Operation(summary= "Delete a HelpRequest")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("")
     public Object deleteHelpRequest(
-            @Parameter(name = "id") @RequestParam Long id) {
-        HelpRequest helpRequest = HelpRequestRepository.findById(id)
+            @Parameter(name="id") @RequestParam Long id) {
+        HelpRequest helpRequest = helpRequestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
 
-        HelpRequestRepository.delete(helpRequest);
-        return genericMessage("Help Request with id %s deleted".formatted(id));
+        helpRequestRepository.delete(helpRequest);
+        return genericMessage("HelpRequest with id %s deleted".formatted(id));
     }
 
     /**
-     * Update a single restaurant. Accessible only to users with the role "ROLE_ADMIN".
-     * @param id id of the restaurant to update
-     * @param incoming the new restaurant contents
-     * @return the updated restaurant object
+     * Update a single help request
+     * @param id       id of the help request
+     * @param incoming the new help request
+     * @return the updated helpreuqest object
      */
-    @Operation(summary = "Update a single Help Request")
+    @Operation(summary= "Update a single help request")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("")
     public HelpRequest updateHelpRequest(
-            @Parameter(name = "id") @RequestParam Long id,
+            @Parameter(name="id") @RequestParam Long id,
             @RequestBody @Valid HelpRequest incoming) {
 
-        HelpRequest helpRequest = HelpRequestRepository.findById(id)
+        HelpRequest helpRequest = helpRequestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
 
-        helpRequest.setRequesterEmail(incoming.getRequesterEmail());
-        helpRequest.setTeamId(incoming.getTeamId());
-        helpRequest.setTableOrBreakoutRoom(incoming.getTableOrBreakoutRoom());
-        helpRequest.setRequestTime(incoming.getRequestTime());
         helpRequest.setExplanation(incoming.getExplanation());
-        helpRequest.setSolved(incoming.getSolved());
+        helpRequest.setRequestTime(incoming.getRequestTime());
+        helpRequest.setRequesterEmail(incoming.getRequesterEmail()); 
+        helpRequest.setSolved(incoming.getSolved()); 
+        helpRequest.setTableOrBreakoutRoom(incoming.getTableOrBreakoutRoom()); 
+        helpRequest.setTeamId(incoming.getTeamId()); 
 
-        HelpRequestRepository.save(helpRequest);
+        helpRequestRepository.save(helpRequest);
 
         return helpRequest;
     }
+
+
 }
-    
