@@ -37,7 +37,7 @@
                       "constraints": {
                         "nullable": false
                       },
-                      "name": "REQUESTEREMAIL",
+                      "name": "REQUESTER_EMAIL",
                       "type": "VARCHAR(255)"
                     }
                   },
@@ -46,7 +46,7 @@
                       "constraints": {
                         "nullable": false
                       },
-                      "name": "TEAMID",
+                      "name": "TEAM_ID",
                       "type": "VARCHAR(255)"
                     }
                   },
@@ -55,13 +55,13 @@
                       "constraints": {
                         "nullable": false
                       },
-                      "name": "TABLEORBREAKOUTMEAL",
+                      "name": "TABLE_OR_BREAKOUT_ROOM",
                       "type": "VARCHAR(255)"
                     }
                   },
                   {
                     "column": {
-                      "name": "REQUESTTIME",
+                      "name": "REQUEST_TIME",
                       "type": "TIMESTAMP"
                     }
                   },
