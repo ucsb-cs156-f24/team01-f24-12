@@ -28,19 +28,19 @@ import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 
 @Tag(name = "HelpRequest")
-@RequestMapping("/api/helprequest")
+@RequestMapping("/api/helprequests")
 @RestController
 @Slf4j
 public class HelpRequestController extends ApiController {
 
     @Autowired
-    HelpRequestRepository HelpRequestRepository;
+    HelpRequestRepository helpRequestRepository;
 
-    @Operation(summary= "Get a single date")
+    @Operation(summary= "list all help requests")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
     public Iterable<HelpRequest> allHelpRequests() {
-        Iterable<HelpRequest> helpRequests = HelpRequestRepository.findAll();
+        Iterable<HelpRequest> helpRequests = helpRequestRepository.findAll();
         return helpRequests;
     }
 
@@ -49,7 +49,7 @@ public class HelpRequestController extends ApiController {
     @GetMapping("")
     public HelpRequest getById(
             @Parameter(name = "id") @RequestParam Long id) {
-        HelpRequest helpRequest = HelpRequestRepository.findById(id)
+        HelpRequest helpRequest = helpRequestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
 
         return helpRequest;
@@ -81,7 +81,7 @@ public class HelpRequestController extends ApiController {
         helpRequest.setExplanation(explanation);
         helpRequest.setSolved(solved);
 
-        HelpRequest savedHelpRequest = HelpRequestRepository.save(helpRequest);
+        HelpRequest savedHelpRequest = helpRequestRepository.save(helpRequest);
 
         return savedHelpRequest;
     }
@@ -96,10 +96,10 @@ public class HelpRequestController extends ApiController {
     @DeleteMapping("")
     public Object deleteHelpRequest(
             @Parameter(name = "id") @RequestParam Long id) {
-        HelpRequest helpRequest = HelpRequestRepository.findById(id)
+        HelpRequest helpRequest = helpRequestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
 
-        HelpRequestRepository.delete(helpRequest);
+        helpRequestRepository.delete(helpRequest);
         return genericMessage("Help Request with id %s deleted".formatted(id));
     }
 
@@ -116,7 +116,7 @@ public class HelpRequestController extends ApiController {
             @Parameter(name = "id") @RequestParam Long id,
             @RequestBody @Valid HelpRequest incoming) {
 
-        HelpRequest helpRequest = HelpRequestRepository.findById(id)
+        HelpRequest helpRequest = helpRequestRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
 
         helpRequest.setRequesterEmail(incoming.getRequesterEmail());
@@ -126,7 +126,7 @@ public class HelpRequestController extends ApiController {
         helpRequest.setExplanation(incoming.getExplanation());
         helpRequest.setSolved(incoming.getSolved());
 
-        HelpRequestRepository.save(helpRequest);
+        helpRequestRepository.save(helpRequest);
 
         return helpRequest;
     }

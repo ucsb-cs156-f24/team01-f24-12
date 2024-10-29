@@ -231,7 +231,7 @@ public class HelpRequestControllerTests extends ControllerTestCase{
             verify(helpRequestRepository, times(1)).delete(any());
 
             Map<String, Object> json = responseToJson(response);
-            assertEquals("HelpRequest with id 15 deleted", json.get("message"));
+            assertEquals("Help Request with id 15 deleted", json.get("message"));
     }
 
     @WithMockUser(roles = { "ADMIN", "USER" })
