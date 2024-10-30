@@ -85,26 +85,30 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
         LocalDateTime ldt = LocalDateTime.parse("2023-10-29T12:00:00");
         MenuItemReviews menuItemReview = MenuItemReviews.builder()
                                         .itemId(1L)
-                                        .reviewerEmail("test@example.com")
+                                        .reviewerEmail("s@mail.com")
                                         .stars(5)
                                         .dateReviewed(ldt)
-                                        .comments("Great item!")
+                                        .comments("Awesome!")
                                         .build();
 
         when(menuItemsReviewsRepository.save(any())).thenReturn(menuItemReview);
 
         // act
         MvcResult response = mockMvc.perform(
-                        post("/api/menuitemreviews/post?itemId=1&reviewerEmail=test@example.com&stars=5&dateReviewed=2023-10-29T12:00:00&comments=Great%20item!")
+                        post("/api/menuitemreviews/post?itemId=1&reviewerEmail=s@mail.com&stars=5&dateReviewed=2023-10-29T12:00:00&comments=Awesome!")
                                 .with(csrf()))
                         .andExpect(status().isOk()).andReturn();
 
         // assert
-        verify(menuItemsReviewsRepository, times(1)).save(any());
+        verify(menuItemsReviewsRepository, times(1)).save(eq(menuItemReview));
         String expectedJson = mapper.writeValueAsString(menuItemReview);
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
     }
+
+
+
+
 
     @WithMockUser(roles = { "USER" })
     @Test
@@ -113,7 +117,7 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
         LocalDateTime ldt1 = LocalDateTime.parse("2023-10-29T12:00:00");
         MenuItemReviews review1 = MenuItemReviews.builder()
                                         .itemId(1L)
-                                        .reviewerEmail("user1@example.com")
+                                        .reviewerEmail("j@mail.com")
                                         .stars(4)
                                         .dateReviewed(ldt1)
                                         .comments("Good item.")
@@ -122,7 +126,7 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
         LocalDateTime ldt2 = LocalDateTime.parse("2023-10-30T13:00:00");
         MenuItemReviews review2 = MenuItemReviews.builder()
                                         .itemId(2L)
-                                        .reviewerEmail("user2@example.com")
+                                        .reviewerEmail("e@mail.com")
                                         .stars(5)
                                         .dateReviewed(ldt2)
                                         .comments("Excellent!")
@@ -151,7 +155,7 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
         LocalDateTime ldt = LocalDateTime.parse("2023-10-29T12:00:00");
         MenuItemReviews review = MenuItemReviews.builder()
                                     .itemId(1L)
-                                    .reviewerEmail("user@example.com")
+                                    .reviewerEmail("user@mail.com")
                                     .stars(5)
                                     .dateReviewed(ldt)
                                     .comments("Awesome!")
@@ -194,7 +198,7 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
         MenuItemReviews review = MenuItemReviews.builder()
                                     .id(15L)
                                     .itemId(1L)
-                                    .reviewerEmail("admin@example.com")
+                                    .reviewerEmail("admin@mail.com")
                                     .stars(5)
                                     .dateReviewed(ldt)
                                     .comments("Perfect!")
@@ -243,18 +247,18 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
         LocalDateTime editedLdt = LocalDateTime.parse("2024-01-01T00:00:00");
 
         MenuItemReviews originalReview = MenuItemReviews.builder()
-                                        .id(67L)
+                                        .id(54L)
                                         .itemId(1L)
-                                        .reviewerEmail("original@example.com")
+                                        .reviewerEmail("svt@mail.com")
                                         .stars(3)
                                         .dateReviewed(originalLdt)
                                         .comments("Average.")
                                         .build();
 
         MenuItemReviews editedReview = MenuItemReviews.builder()
-                                        .id(67L)
-                                        .itemId(1L)
-                                        .reviewerEmail("edited@example.com")
+                                        .id(54L)
+                                        .itemId(2L)
+                                        .reviewerEmail("svsv@mail.com")
                                         .stars(4)
                                         .dateReviewed(editedLdt)
                                         .comments("Good.")
@@ -262,7 +266,7 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
 
         String requestBody = mapper.writeValueAsString(editedReview);
 
-        when(menuItemsReviewsRepository.findById(eq(67L))).thenReturn(Optional.of(originalReview));
+        when(menuItemsReviewsRepository.findById(eq(54L))).thenReturn(Optional.of(originalReview));
 
         // act
         MvcResult response = mockMvc.perform(
@@ -274,7 +278,7 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
                         .andExpect(status().isOk()).andReturn();
 
         // assert
-        verify(menuItemsReviewsRepository, times(1)).findById(67L);
+        verify(menuItemsReviewsRepository, times(1)).findById(54L);
         verify(menuItemsReviewsRepository, times(1)).save(editedReview);
         String responseString = response.getResponse().getContentAsString();
         assertEquals(requestBody, responseString);
@@ -286,17 +290,17 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
         // arrange
         LocalDateTime ldt = LocalDateTime.parse("2023-10-29T12:00:00");
         MenuItemReviews editedReview = MenuItemReviews.builder()
-                                        .id(67L)
+                                        .id(54L)
                                         .itemId(2L)
-                                        .reviewerEmail("nonexistent@example.com")
+                                        .reviewerEmail("nonexistent@mail.com")
                                         .stars(2)
                                         .dateReviewed(ldt)
-                                        .comments("Not good.")
+                                        .comments("Bad.")
                                         .build();
 
         String requestBody = mapper.writeValueAsString(editedReview);
 
-        when(menuItemsReviewsRepository.findById(eq(67L))).thenReturn(Optional.empty());
+        when(menuItemsReviewsRepository.findById(eq(54L))).thenReturn(Optional.empty());
 
         // act
         MvcResult response = mockMvc.perform(
@@ -308,7 +312,7 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
                         .andExpect(status().isNotFound()).andReturn();
 
         // assert
-        verify(menuItemsReviewsRepository, times(1)).findById(67L);
+        verify(menuItemsReviewsRepository, times(1)).findById(54L);
         Map<String, Object> json = responseToJson(response);
         assertEquals("MenuItemReviews with id 67 not found", json.get("message"));
     }
