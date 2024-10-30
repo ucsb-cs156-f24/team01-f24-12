@@ -247,18 +247,18 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
         LocalDateTime editedLdt = LocalDateTime.parse("2024-01-01T00:00:00");
 
         MenuItemReviews originalReview = MenuItemReviews.builder()
-                                        .id(54L)
+                                        .id(526L)
                                         .itemId(1L)
-                                        .reviewerEmail("svt@mail.com")
+                                        .reviewerEmail("original@mail.com")
                                         .stars(3)
                                         .dateReviewed(originalLdt)
                                         .comments("Average.")
                                         .build();
 
         MenuItemReviews editedReview = MenuItemReviews.builder()
-                                        .id(54L)
+                                        .id(526L)
                                         .itemId(2L)
-                                        .reviewerEmail("svsv@mail.com")
+                                        .reviewerEmail("edited@mail.com")
                                         .stars(4)
                                         .dateReviewed(editedLdt)
                                         .comments("Good.")
@@ -266,11 +266,11 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
 
         String requestBody = mapper.writeValueAsString(editedReview);
 
-        when(menuItemsReviewsRepository.findById(eq(54L))).thenReturn(Optional.of(originalReview));
+        when(menuItemsReviewsRepository.findById(eq(526L))).thenReturn(Optional.of(originalReview));
 
         // act
         MvcResult response = mockMvc.perform(
-                        put("/api/menuitemreviews?id=67")
+                        put("/api/menuitemreviews?id=526")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .characterEncoding("utf-8")
                                 .content(requestBody)
@@ -278,7 +278,7 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
                         .andExpect(status().isOk()).andReturn();
 
         // assert
-        verify(menuItemsReviewsRepository, times(1)).findById(54L);
+        verify(menuItemsReviewsRepository, times(1)).findById(526L);
         verify(menuItemsReviewsRepository, times(1)).save(editedReview);
         String responseString = response.getResponse().getContentAsString();
         assertEquals(requestBody, responseString);
@@ -290,7 +290,7 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
         // arrange
         LocalDateTime ldt = LocalDateTime.parse("2023-10-29T12:00:00");
         MenuItemReviews editedReview = MenuItemReviews.builder()
-                                        .id(54L)
+                                        .id(526L)
                                         .itemId(2L)
                                         .reviewerEmail("nonexistent@mail.com")
                                         .stars(2)
@@ -300,11 +300,11 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
 
         String requestBody = mapper.writeValueAsString(editedReview);
 
-        when(menuItemsReviewsRepository.findById(eq(54L))).thenReturn(Optional.empty());
+        when(menuItemsReviewsRepository.findById(eq(526L))).thenReturn(Optional.empty());
 
         // act
         MvcResult response = mockMvc.perform(
-                        put("/api/menuitemreviews?id=67")
+                        put("/api/menuitemreviews?id=526")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .characterEncoding("utf-8")
                                 .content(requestBody)
@@ -312,8 +312,8 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
                         .andExpect(status().isNotFound()).andReturn();
 
         // assert
-        verify(menuItemsReviewsRepository, times(1)).findById(54L);
+        verify(menuItemsReviewsRepository, times(1)).findById(526L);
         Map<String, Object> json = responseToJson(response);
-        assertEquals("MenuItemReviews with id 67 not found", json.get("message"));
+        assertEquals("MenuItemReviews with id 526 not found", json.get("message"));
     }
 }
